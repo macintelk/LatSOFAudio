@@ -141,6 +141,5 @@ else
 fi
 
 echo
-echo "=== userspace half (do this once, no sudo) ==="
+echo "=== micro set default loader ==="
 echo "  default input : cd latsof-default-input && ./install.sh"
-echo "  mic gain      : sudo nvram latsof.micvol=0.75   # 0.0..1.0, 0.75 = 30 dB"
