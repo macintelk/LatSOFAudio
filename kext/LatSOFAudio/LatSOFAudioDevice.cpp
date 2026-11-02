@@ -489,13 +489,13 @@ static void freeDma(DmaBuf *b) {
 }
 
 // Kext module entry
-extern "C" kern_return_t LatSOFAudio_start(kmod_info_t *ki, void *data);
+/*extern "C" kern_return_t LatSOFAudio_start(kmod_info_t *ki, void *data);
 extern "C" kern_return_t LatSOFAudio_stop(kmod_info_t *ki, void *data);
 __attribute__((visibility("default")))
 KMOD_EXPLICIT_DECL(com.hackintosh.LatSOFAudio, "1.1.5", LatSOFAudio_start, LatSOFAudio_stop)
 kern_return_t LatSOFAudio_start(kmod_info_t *ki, void *data) { return KERN_SUCCESS; }
 kern_return_t LatSOFAudio_stop(kmod_info_t *ki, void *data) { return KERN_SUCCESS; }
-
+*/
 // Embedded firmware
 extern "C" const unsigned char sof_fw_data[];
 extern "C" const unsigned long long sof_fw_size;

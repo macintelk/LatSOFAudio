@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      LatSOF default-input selection — boot-time one-shot.
+
+      Runs the latsof-default-input tool ONCE at each login. The tool
+      waits up to 30 s for the LatSOF input device to appear (LatSOF
+      publishes its engine ~1.5 s after kext start because initDSP
+      defers off the matching thread, and a RunAtLoad agent can fire
+      before that), sets it as the system default input, and exits.
+
+      This fixes the boot race where AppleHDA's ghost "Internal
+      Microphone" engine (published by AppleALC from a codec pin with
+      no real mic behind it) wins the default-input heuristic because
+      it registers first.
+
+      Why a LaunchAgent (user) and not a LaunchDaemon (system):
+        CoreAudio's default-input preference is a per-user HAL setting.
+        A system daemon can enumerate devices but cannot set the user's
+        default input reliably. This agent runs in the user GUI session.
+
+      Why NO KeepAlive:
+        Deliberate. The tool runs once per login and then gets out of
+        the way — if you switch to a USB headset mid-session, macOS
+        keeps your choice. (The old watch/KeepAlive mode re-asserted
+        LatSOF every 10 s and would fight you; it is still available
+        for debugging by running the tool with its watch flag.)
+
+      Mic VOLUME is not handled here at all: the kext reads its own
+      gain from NVRAM at engine init — `sudo nvram latsof.micvol=0.65`.
+
+      Stop / uninstall:
+        make uninstall    (from the source dir)
+        or:
+        launchctl unload ~/Library/LaunchAgents/local.latsof.default-input.plist
+        rm               ~/Library/LaunchAgents/local.latsof.default-input.plist
+    -->
+    <key>Label</key>
+    <string>local.latsof.default-input</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>@BINDIR@/latsof-default-input</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Run in the user GUI session so CoreAudio HAL calls land in the
+         right per-user context. -->
+    <key>LimitLoadToSessionType</key>
+    <string>Aqua</string>
+
+    <!-- Short-lived one-shot; never in the UI. -->
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <!-- Log to unified logging; view with:
+         log show (predicate: processImagePath contains "latsof-default-input") -->
+    <key>StandardOutPath</key>
+    <string>/tmp/latsof-default-input.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/latsof-default-input.err</string>
+</dict>
+</plist>
