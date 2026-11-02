@@ -72,7 +72,7 @@ $(KEXT_BUNDLE): $(OBJS)
 	@echo "=== Compiling $< ==="
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(SRCDIR)/sof_firmware_embed.o: $(SRCDIR)/sof_firmware_embed.s $(SRCDIR)/Firmware/sof-cml.ri
+$(SRCDIR)/sof_firmware_embed.o: $(SRCDIR)/sof_firmware_embed.s $(SRCDIR)/Firmware/sof-tgl.ri
 	@echo "=== Embedding firmware ==="
 	$(AS) $(ASFLAGS) -c $< -o $@
 
